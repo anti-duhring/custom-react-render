@@ -1,72 +1,86 @@
 import ReactReconciler from "react-reconciler";
 import emptyObject from 'fbjs/lib/emptyObject';
-import createElement from "./createElement";
+import createElement from "./elementHandler/createElement";
+import updateElement from "./elementHandler/updateElement";
 
 const hostConfig = {
-    now: () => {},
     supportsMutation: true,
     createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
         return createElement(type, props, internalInstanceHandle)
     },
     createTextInstance(text, rootContainerInstance, internalInstanceHandle) {
-        return text
+        return document.createTextNode(text)
     },
-    appendChildToContainer(parentInstance, child) {},
+    appendChildToContainer(parentInstance, child) {
+        parentInstance.appendChild(child)
+    
+    },
     appendChild(parentInstance, child) {
-        if(parentInstance.appendChild) {
-            parentInstance.appendChild(child)
-        } else {
-            parentInstance.document = child
-        } 
+        parentInstance.appendChild(child)
+
     },
-    appendInitialChild(parentInstance, child) {},
-    removeChildFromContainer(parentInstance, child) {},
-    removeChild(parentInstance, child) {},
-    insertBefore(parentInstance, child, beforeChild) {},
+    appendInitialChild(parentInstance, child) {
+        parentInstance.appendChild(child)
+
+    }
+    ,
+    removeChildFromContainer(parentInstance, child) {
+        parentInstance.removeChild(child)
+    
+    },
+    removeChild(parentInstance, child) {
+        parentInstance.removeChild(child)
+    },
+    insertBefore(parentInstance, child, beforeChild) {
+        parentInstance.insertBefore(child, beforeChild)
+    
+    },
     insertInContainerBefore(parentInstance, child, beforeChild) {},
     prepareUpdate(instance, type, oldProps, newProps, rootContainer, hostContext) {
-        return true
+        return updateElement(instance, oldProps, newProps)
     },
-    commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {},
+    commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
+        return updateElement(instance, oldProps, newProps)
+    },
+    commitTextUpdate(textInstance, prevText, nextText) {
+        console.log(prevText, nextText)
+        textInstance.nodeValue = nextText
+    },
     finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
-        return false
+        
     },
     getChildContext() {},
     getPublicInstance(instance) {
-        return instance
     },
     getRootHostContext(rootContainer) {
-        return null
+        
     },
     prepareForCommit(containerInfo) {
-        return null
+       
     },
     resetAfterCommit(containerInfo) {},
     resetTextContent(instance) {},
     shouldSetTextContent() {
-        return false
+       return false
     },
     clearContainer(container) {},
     getChildHostContext(parentHostContext, type, rootContainer){
-        return emptyObject;
+       
     }
 }
 ;
 const DOMRenderer = ReactReconciler(hostConfig);
 
-let internalContainerStructure;
 export default {
   render(elements, containerNode, callback) {
 
     // We must do this only once
-    if (!internalContainerStructure) {
-      internalContainerStructure = DOMRenderer.createContainer(
+    let container = DOMRenderer.createContainer(
         containerNode,
         false,
         false
       );
-    }
 
-    DOMRenderer.updateContainer(elements, internalContainerStructure, null, callback);
+    DOMRenderer.updateContainer(elements, container, null, callback);
   }
 }

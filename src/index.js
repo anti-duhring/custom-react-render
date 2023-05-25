@@ -3,9 +3,7 @@ import Rebook from './rebook';
 import App from './App';
 
 Rebook.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <App />,
   document.getElementById('root')
 );
 
