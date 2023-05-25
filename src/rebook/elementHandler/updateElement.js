@@ -1,6 +1,10 @@
 import setAttributesForElement from './setAttributesForElement'
+import setStyleForElement from './setStyleForElement'
 export default function(instance, oldProps, newProps) {
 
     const props = {...oldProps, ...newProps}
-    return setAttributesForElement(instance, props)
+
+    let element = setAttributesForElement(instance, props)
+    element = setStyleForElement(element, props.style)
+    return element
 }
