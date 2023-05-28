@@ -6,6 +6,13 @@ export function createCSSClass(className, styles) {
     removeCSSClass(className)
 }
 
+export function createCSSClassWithSelector(selector, styles) {
+    const styleSheet = document.querySelector('style').sheet;
+    
+    styleSheet.insertRule(`${selector} { ${styles} }`, styleSheet.cssRules.length); 
+
+}
+
 export function removeCSSClass(className) {
     const styleSheet = document.querySelector('style').sheet;
     

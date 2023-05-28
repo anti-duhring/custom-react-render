@@ -2,6 +2,7 @@ import ReactReconciler from "react-reconciler";
 import emptyObject from 'fbjs/lib/emptyObject';
 import createElement from "./elementHandler/createElement";
 import updateElement from "./elementHandler/updateElement";
+import removeElement from "./elementHandler/removeElement";
 
 const hostConfig = {
     supportsMutation: true,
@@ -26,10 +27,12 @@ const hostConfig = {
     ,
     removeChildFromContainer(parentInstance, child) {
         parentInstance.removeChild(child)
+        removeElement(parentInstance, child)
     
     },
     removeChild(parentInstance, child) {
         parentInstance.removeChild(child)
+        removeElement(parentInstance, child)
     },
     insertBefore(parentInstance, child, beforeChild) {
         parentInstance.insertBefore(child, beforeChild)

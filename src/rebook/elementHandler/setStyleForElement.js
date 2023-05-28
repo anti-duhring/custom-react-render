@@ -1,4 +1,4 @@
-import { createCSSClass } from "./utils/manageCSSClass"
+import { createCSSClass, createCSSClassWithSelector } from "./utils/manageCSSClass"
 
 /**
  * Applies style and pseudo classes to an element
@@ -20,10 +20,15 @@ export default function(element, style = {}) {
     
     Object.entries(pseudoClasses).forEach(([key, value]) => {
         const stylesString = Object.entries(value)
-            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}!important;`)
+            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1')
+            .toLowerCase()}: ${value}!important;`)
             .join(' ')
 
-        createCSSClass(element.id + key, stylesString)
+        if(key === '_placeholder') {
+            createCSSClassWithSelector(`#${element.id}::placeholder`, stylesString)
+        } else {
+            createCSSClass(element.id + key, stylesString)
+        } 
     });
 
     element.onmouseenter = (e) => {

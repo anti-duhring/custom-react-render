@@ -1,13 +1,30 @@
 import { useState } from "react";
-import Title from "./components/Title";
-import TextBox from "./components/TextBox";
+import { Title, TextBox, TodoList } from './components'
 import './App.css';
+import localStorageService from "./service/localStorage.service";
 
 
 function App() {
-  const images = [ 'https://beniciofilho.com.br/wp-content/uploads/2021/08/HEGEL-.png', 'https://s2.glbimg.com/Ofnoic3_-XXqwL7t3gvGxq1oLdE=/e.glbimg.com/og/ed/f/original/2018/05/03/karl-marx.jpg']
-  const [imageToShow, setImageToShow] = useState(images[0])
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState(localStorageService.retrieve('todos') ?? [])
+
+  const createTodo = (text) => {
+    setTodos(oldTodos => {
+      const highestExistentTodoId = oldTodos.map(el => el.id).sort((a, b) => b - a)[0] ?? 0
+
+      const newTodos = [
+        ...oldTodos,
+        {
+          id: highestExistentTodoId + 1,
+          content: text, 
+          done: false  
+        }
+      ]
+      
+      localStorageService.persist('todos', newTodos)
+
+      return newTodos
+    })
+  }
 
   return (
     <div 
@@ -17,7 +34,10 @@ function App() {
       }}
     >
       <Title />
-      <TextBox />
+      <TextBox
+        onsubmit={createTodo}
+      />
+      <TodoList todos={todos} />
     </div>
   );
 }
